@@ -15,18 +15,18 @@ import { useColorMode, useColorModeValue } from "../components/ui/color-mode";
 import { InputGroup } from "../components/ui/input-group";
 import { Link } from "react-router";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { registerSchema } from "../validation";
+import { SignUpSchema } from "../validation";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { getFormSignUpFields } from "../data";
-
-interface IFormInput {
-  username: string;
-  email: string;
-  password: string;
-}
+import { useAppDispatch } from "../app/store";
+import { getUserAuth, userAuthSelector } from "../app/features/AuthSlice";
+import { IFormSignUpInfo } from "../interfaces";
+import { useSelector } from "react-redux";
 
 const SignUp = () => {
   /*________________states_______________*/
+  const { isLoading } = useSelector(userAuthSelector);
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const boxBg = useColorModeValue("white", "#0a1a1b");
   const { colorMode } = useColorMode();
@@ -35,12 +35,11 @@ const SignUp = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IFormInput>({ resolver: yupResolver(registerSchema) });
+  } = useForm<IFormSignUpInfo>({ resolver: yupResolver(SignUpSchema) });
   /* _______________Handlers_______________________ */
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    console.log({ data });
+  const onSubmit: SubmitHandler<IFormSignUpInfo> = async (data) => {
+    dispatch(getUserAuth({ userInfo: data, type: "signUp" }));
   };
-
   /* _______________Renders_______________________ */
   const renderFields = getFormSignUpFields(showPassword).map(
     ({ name, type, label, icon, placeholder, hasToggle }, idx) => (
@@ -110,6 +109,8 @@ const SignUp = () => {
                 color="white"
                 _hover={{ bg: "green.500" }}
                 type="submit"
+                loading={isLoading}
+                loadingText="Almost There..."
               >
                 Sign up
               </Button>

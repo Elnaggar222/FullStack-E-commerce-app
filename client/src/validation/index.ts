@@ -1,5 +1,5 @@
 import * as yup from "yup";
-export const registerSchema = yup
+export const SignUpSchema = yup
   .object({
     username: yup
       .string()
@@ -18,7 +18,7 @@ export const registerSchema = yup
       .min(5, "Password should be at least 5 characters"),
   })
   .required();
-export const loginSchema = yup
+export const SignInSchema = yup
   .object({
     identifier: yup
       .string()

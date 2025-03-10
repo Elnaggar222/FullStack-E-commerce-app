@@ -13,10 +13,11 @@ import { useParams } from "react-router";
 import ProductRating from "../components/ProductRating";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import ErrorHandler from "../components/errors/ErrorHandler";
 import { IErrorResponse, IProduct } from "../interfaces";
 import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton";
+import axiosInstance from "../config/axios.config";
 
 const ProductDetailsPage = () => {
   /*________________states_______________*/
@@ -30,9 +31,7 @@ const ProductDetailsPage = () => {
   >({
     queryKey: ["Product", id],
     queryFn: async () => {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_SERVER_URL}/api/products/${id}?populate=*`
-      );
+      const { data } = await axiosInstance.get(`/products/${id}?populate=*`);
       return data.data;
     },
     retry: 0,

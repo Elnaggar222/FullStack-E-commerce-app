@@ -7,19 +7,75 @@ import {
   Text,
   Grid,
   GridItem,
+  Field,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { IoEye, IoEyeOffSharp } from "react-icons/io5";
 import { useColorMode, useColorModeValue } from "../components/ui/color-mode";
 import { InputGroup } from "../components/ui/input-group";
-import { FaLock } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { SignInSchema } from "../validation";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { getFormSignInFields } from "../data";
+import { useAppDispatch } from "../app/store";
+import { getUserAuth, userAuthSelector } from "../app/features/AuthSlice";
+import { IFormSignInInfo } from "../interfaces";
+import { useSelector } from "react-redux";
+
 const SignIn = () => {
   /*________________states_______________*/
+  const { isLoading } = useSelector(userAuthSelector);
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
   const boxBg = useColorModeValue("white", "#0a1a1b");
   const { colorMode } = useColorMode();
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormSignInInfo>({ resolver: yupResolver(SignInSchema) });
+  /* _______________Handlers_______________________ */
+  const onSubmit: SubmitHandler<IFormSignInInfo> = async (data) => {
+    dispatch(getUserAuth({ userInfo: data, type: "signIn" }));
+  };
+  /* _______________Renders_______________________ */
+  const renderFields = getFormSignInFields(showPassword).map(
+    ({ name, type, label, icon, placeholder, hasToggle }, idx) => (
+      <Field.Root key={idx} invalid={!!errors[name]?.message}>
+        <Text fontSize={"sm"}>{label}</Text>
+        <Box position="relative" w="full">
+          <InputGroup width="full" startElement={icon}>
+            <Input
+              type={type}
+              {...(!errors[name] && {
+                borderColor: colorMode === "dark" ? "#0a1a1b" : "gray.200",
+                outlineColor:
+                  colorMode === "dark" ? "gray.300" : "blackAlpha.600",
+              })}
+              placeholder={placeholder}
+              {...register(name)}
+            />
+          </InputGroup>
+          {hasToggle && (
+            <Button
+              bg="transparent"
+              variant="ghost"
+              onClick={() => setShowPassword((prev) => !prev)}
+              position="absolute"
+              top="50%"
+              right="0.5rem"
+              transform="translateY(-50%)"
+              size="sm"
+            >
+              {showPassword ? <IoEye /> : <IoEyeOffSharp />}
+            </Button>
+          )}
+        </Box>
+        <Field.ErrorText>{errors[name]?.message}</Field.ErrorText>
+      </Field.Root>
+    )
+  );
   return (
     <Grid templateColumns={{ base: "1fr", md: "1fr 1fr" }} minH="100vh">
       {/* Left Side: Form */}
@@ -33,74 +89,30 @@ const SignIn = () => {
         <Stack maxW="lg" w="full">
           <Stack align="center">
             <Heading fontSize="3xl" textAlign="center" mb={6}>
-              Sign in to your account
+              Sign In & Explore the Best Deals
             </Heading>
           </Stack>
           <Box
+            as={"form"}
             rounded="lg"
             boxShadow="lg"
             p={8}
             bg={colorMode === "dark" ? "#0e2323" : "gray.50"}
+            onSubmit={handleSubmit(onSubmit)}
           >
             <Stack gap={4}>
-              <Box>
-                <Text mb="1" fontSize={"sm"}>
-                  Email address
-                </Text>
-                <InputGroup width={"full"} startElement={<MdEmail />}>
-                  <Input
-                    borderColor={colorMode === "dark" ? "#0a1a1b" : "gray.200"}
-                    outlineColor={
-                      colorMode === "dark" ? "gray.300" : "blackAlpha.600"
-                    }
-                    type="text"
-                    placeholder="Email"
-                  />
-                </InputGroup>
-              </Box>
-              <Box>
-                <Text mb="1" fontSize={"sm"}>
-                  Password
-                </Text>
-                <Box position="relative">
-                  <InputGroup width={"full"} startElement={<FaLock />}>
-                    <Input
-                      borderColor={
-                        colorMode === "dark" ? "#0a1a1b" : "gray.200"
-                      }
-                      outlineColor={
-                        colorMode === "dark" ? "gray.300" : "blackAlpha.600"
-                      }
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Password"
-                    />
-                  </InputGroup>
-                  <Button
-                    bg={"transparent"}
-                    variant="ghost"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    position="absolute"
-                    top="50%"
-                    right="0.5rem"
-                    transform="translateY(-50%)"
-                    size="sm"
-                  >
-                    {showPassword ? <IoEye /> : <IoEyeOffSharp />}
-                  </Button>
-                </Box>
-              </Box>
-              <Stack pt={2}>
-                <Button
-                  size="lg"
-                  bg="green.600"
-                  // bg="green.600"
-                  color="white"
-                  _hover={{ bg: "green.500" }}
-                  type="submit"
-                >
-                  Sign in
-                </Button>
-              </Stack>
+              {renderFields}
+              <Button
+                size="lg"
+                bg="green.600"
+                color="white"
+                _hover={{ bg: "green.500" }}
+                type="submit"
+                loading={isLoading}
+                loadingText="Almost There..."
+              >
+                Sign In
+              </Button>
             </Stack>
           </Box>
         </Stack>

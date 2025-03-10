@@ -1,10 +1,10 @@
 import { Center, Grid } from "@chakra-ui/react";
 import ProductCard from "../components/ProductCard";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { IProduct } from "../interfaces";
 import ErrorHandler from "../components/errors/ErrorHandler";
 import ProductCardSkeleton from "../components/ProductCardSkeleton";
+import axiosInstance from "../config/axios.config";
 
 const ProductsPage = () => {
   /*________________states_______________*/
@@ -13,10 +13,8 @@ const ProductsPage = () => {
   const { isLoading, error, data } = useQuery<IProduct[]>({
     queryKey: ["Products"],
     queryFn: async () => {
-      const { data } = await axios.get(
-        `${
-          import.meta.env.VITE_SERVER_URL
-        }/api/products?populate[thumbnail]=true`
+      const { data } = await axiosInstance.get(
+        "/products?populate[thumbnail]=true"
       );
       return data.data;
     },

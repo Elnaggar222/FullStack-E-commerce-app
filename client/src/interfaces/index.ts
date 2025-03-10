@@ -32,3 +32,20 @@ export interface ISignUpField {
   placeholder: string;
   hasToggle?: boolean;
 }
+export interface ISignInField {
+  name: "identifier" | "password";
+  type: string;
+  label: string;
+  icon: ReactNode;
+  placeholder: string;
+  hasToggle?: boolean;
+}
+export interface IFormSignUpInfo {
+  username: string;
+  email: string;
+  password: string;
+}
+export interface IFormSignInInfo {
+  identifier: string;
+  password: string;
+}
