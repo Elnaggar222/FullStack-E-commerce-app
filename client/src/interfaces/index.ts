@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-=======
 import { ReactNode } from "react";
-
->>>>>>> add-login-register
 export interface IProduct {
   description: string;
   discountPercentage: number;
@@ -28,8 +24,6 @@ export interface IErrorResponse {
     status: number;
   };
 }
-<<<<<<< HEAD
-=======
 export interface ISignUpField {
   name: "username" | "email" | "password";
   type: string;
@@ -38,4 +32,3 @@ export interface ISignUpField {
   placeholder: string;
   hasToggle?: boolean;
 }
->>>>>>> add-login-register

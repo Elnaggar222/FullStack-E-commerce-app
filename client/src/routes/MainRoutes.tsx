@@ -6,11 +6,8 @@ import ProductsPage from "../pages/Products";
 import ProductDetailsPage from "../pages/ProductDetails";
 import ErrorHandler from "../components/errors/ErrorHandler";
 import NotFoundPage from "../pages/NotFound";
-<<<<<<< HEAD
-=======
 import SignUp from "../pages/SignUp";
 import SignIn from "../pages/SignIn";
->>>>>>> add-login-register
 
 const MainRoutes = () => {
   return (
@@ -21,11 +18,8 @@ const MainRoutes = () => {
         <Route path="products" element={<ProductsPage />} />
         <Route path="product/:id" element={<ProductDetailsPage />} />
       </Route>
-<<<<<<< HEAD
-=======
       <Route path="/signUp" element={<SignUp />} />
       <Route path="/signIn" element={<SignIn />} />
->>>>>>> add-login-register
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
