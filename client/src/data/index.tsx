@@ -43,3 +43,8 @@ export const getFormSignInFields = (showPassword: boolean): ISignInField[] => [
     hasToggle: true,
   },
 ];
+export const NavLinks = [
+  { name: "Products", to: "/products" },
+  { name: "Contact", to: "/contact" },
+  { name: "About", to: "/about" },
+];

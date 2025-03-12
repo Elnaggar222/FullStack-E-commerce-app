@@ -122,7 +122,7 @@ const SignIn = () => {
         display={{ base: "none", md: "block" }}
         bgImage={`url(${
           import.meta.env.VITE_SERVER_URL
-        }/uploads/pexels_n_voitkevich_6214470_3d7cd2f7e1.jpg)`}
+        }/uploads/online_shopping_4532460_1280_ca5657d1ac.jpg)`}
         bgSize="cover"
         bgPos="center"
         bgRepeat="no-repeat"

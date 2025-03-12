@@ -23,3 +23,9 @@ Install Redux Toolkit and using Create Async Thunk For SignUp and Login
 using toaster from Chakra Ui
 
 <!-- ################# -->
+
+Added ProtectedRoute Component
+universal-cookie
+Navbar code Refactoring ,active NavLink ,add animation and profile menu
+
+<!-- ################# -->

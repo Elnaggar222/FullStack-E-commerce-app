@@ -8,6 +8,7 @@ import {
 import { RootState } from "../store";
 import { toaster } from "../../components/ui/toaster";
 import { AxiosError } from "axios";
+import CookieService from "../../services/CookieService";
 
 interface IInitialState {
   jwt: string;
@@ -67,6 +68,15 @@ export const userAuthSlice = createSlice({
           actionType === "signUp"
             ? "Account Created Successfully"
             : "Logged in Successfully";
+
+        const DateNow = new Date();
+        const In_Days = 3;
+        // Expiration Date in Milliseconds
+        const ExpIn_Days = DateNow.setTime(
+          DateNow.getTime() + 24 * 60 * 60 * 1000 * In_Days
+        );
+        const options = { path: "/", expires: new Date(ExpIn_Days) };
+        CookieService.setCookie("jwt", state.jwt, options);
 
         toaster.create({
           title: successMessage,
