@@ -4,6 +4,7 @@ import {
   IErrorResponse,
   IFormSignInInfo,
   IFormSignUpInfo,
+  ILoggedUser,
 } from "../../interfaces";
 import { RootState } from "../store";
 import { toaster } from "../../components/ui/toaster";
@@ -11,13 +12,18 @@ import { AxiosError } from "axios";
 import CookieService from "../../services/CookieService";
 
 interface IInitialState {
-  jwt: string;
+  loggedUser: ILoggedUser;
   isLoading: boolean;
   error: AxiosError<IErrorResponse> | null;
 }
 
 const initialState: IInitialState = {
-  jwt: "",
+  loggedUser: {
+    jwt: "",
+    user: {
+      username: "",
+    },
+  },
   isLoading: false,
   error: null,
 };
@@ -31,14 +37,14 @@ export const getUserAuth = createAsyncThunk(
       type,
     }: {
       userInfo: IFormSignUpInfo | IFormSignInInfo;
-      type: "signIn" | "signUp";
+      type: "Sign In" | "Sign Up";
     },
     thunkAPI
   ) => {
     const { rejectWithValue } = thunkAPI;
     try {
       const endpoint =
-        type === "signUp" ? "/auth/local/register" : "/auth/local";
+        type === "Sign Up" ? "/auth/local/register" : "/auth/local";
       const { data } = await axiosInstance.post(endpoint, userInfo);
       return data;
     } catch (error) {
@@ -56,16 +62,16 @@ export const userAuthSlice = createSlice({
       .addCase(getUserAuth.pending, (state) => {
         state.isLoading = true;
         state.error = null;
-        state.jwt = "";
+        state.loggedUser = initialState.loggedUser;
       })
       .addCase(getUserAuth.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.jwt = action.payload.jwt;
+        state.loggedUser = action.payload;
 
         // Determine message based on action meta
         const actionType = action.meta.arg.type;
         const successMessage =
-          actionType === "signUp"
+          actionType === "Sign Up"
             ? "Account Created Successfully"
             : "Logged in Successfully";
 
@@ -76,7 +82,7 @@ export const userAuthSlice = createSlice({
           DateNow.getTime() + 24 * 60 * 60 * 1000 * In_Days
         );
         const options = { path: "/", expires: new Date(ExpIn_Days) };
-        CookieService.setCookie("jwt", state.jwt, options);
+        CookieService.setCookie("loggedUser", state.loggedUser, options);
 
         toaster.create({
           title: successMessage,
@@ -87,8 +93,13 @@ export const userAuthSlice = createSlice({
       .addCase(getUserAuth.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as AxiosError<IErrorResponse>;
+        // Determine message based on action meta
+        const actionType = action.meta.arg.type;
+        const errorMessage = `Failed To ${actionType} : ${
+          state.error.response?.data.error.message || "SERVER ERROR"
+        }`;
         toaster.create({
-          title: state.error.response?.data.error.message ?? "SERVER ERROR",
+          title: errorMessage,
           type: "error",
           duration: 1500,
         });

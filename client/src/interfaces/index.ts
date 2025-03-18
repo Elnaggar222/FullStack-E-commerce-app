@@ -49,3 +49,21 @@ export interface IFormSignInInfo {
   identifier: string;
   password: string;
 }
+export interface ILoggedUser {
+  jwt: string;
+  user: {
+    username: string;
+  };
+}
+export interface ICart {
+  quantity: number;
+  discountPercentage: number;
+  documentId: string;
+  price: number;
+  rating: number;
+  title: string;
+  thumbnail: string;
+}
+export interface IUserProfile {
+  carts: ICart[];
+}

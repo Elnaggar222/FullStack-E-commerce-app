@@ -1,10 +1,12 @@
-import { Box, Stack } from "@chakra-ui/react";
+import { Box, Icon, Stack } from "@chakra-ui/react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoClose } from "react-icons/io5";
 import { useColorMode } from "./ui/color-mode";
 import { NavLinks } from "../data";
 import NavItem from "./NavItem";
 import { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
+import { userAuthSelector } from "../app/features/AuthSlice";
 
 interface IProps {
   open: boolean;
@@ -12,8 +14,13 @@ interface IProps {
   onClose: () => void;
 }
 const NavMenu = ({ open, onClose, onOpen }: IProps) => {
+  /**_________________States___________________ */
   const { colorMode } = useColorMode();
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const {
+    loggedUser: { jwt },
+  } = useSelector(userAuthSelector);
+  const isLoggedIn = !!jwt;
 
   // Function to close menu when clicking outside
   useEffect(() => {
@@ -49,7 +56,11 @@ const NavMenu = ({ open, onClose, onOpen }: IProps) => {
         transition="transform 0.3s ease"
         transform={open ? "rotate(180deg)" : "rotate(0deg)"}
       >
-        {open ? <IoClose size={25} /> : <GiHamburgerMenu size={25} />}
+        {open ? (
+          <Icon as={IoClose} boxSize={6} />
+        ) : (
+          <Icon as={GiHamburgerMenu} boxSize={5} />
+        )}
       </Box>
       <Box
         ref={menuRef}
@@ -70,6 +81,12 @@ const NavMenu = ({ open, onClose, onOpen }: IProps) => {
         pointerEvents={open ? "auto" : "none"} // Prevents interaction when hidden(Prevents clicking the hidden menu)
       >
         <Stack as={"nav"}>
+          {!isLoggedIn && (
+            <>
+              <NavItem to={"/signIn"} name={"Sign In"} />
+              <NavItem to={"/signUp"} name={"Sign Up"} />
+            </>
+          )}
           {NavLinks.map(({ name, to }) => (
             <NavItem key={name} to={to} name={name} />
           ))}

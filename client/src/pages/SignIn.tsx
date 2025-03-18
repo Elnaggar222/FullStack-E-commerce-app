@@ -37,7 +37,7 @@ const SignIn = () => {
   } = useForm<IFormSignInInfo>({ resolver: yupResolver(SignInSchema) });
   /* _______________Handlers_______________________ */
   const onSubmit: SubmitHandler<IFormSignInInfo> = async (data) => {
-    dispatch(getUserAuth({ userInfo: data, type: "signIn" }));
+    dispatch(getUserAuth({ userInfo: data, type: "Sign In" }));
   };
   /* _______________Renders_______________________ */
   const renderFields = getFormSignInFields(showPassword).map(

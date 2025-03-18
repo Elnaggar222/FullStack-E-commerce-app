@@ -38,7 +38,7 @@ const SignUp = () => {
   } = useForm<IFormSignUpInfo>({ resolver: yupResolver(SignUpSchema) });
   /* _______________Handlers_______________________ */
   const onSubmit: SubmitHandler<IFormSignUpInfo> = async (data) => {
-    dispatch(getUserAuth({ userInfo: data, type: "signUp" }));
+    dispatch(getUserAuth({ userInfo: data, type: "Sign Up" }));
   };
   /* _______________Renders_______________________ */
   const renderFields = getFormSignUpFields(showPassword).map(

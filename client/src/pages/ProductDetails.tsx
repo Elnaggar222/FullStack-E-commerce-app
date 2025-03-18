@@ -12,15 +12,23 @@ import {
 import { useParams } from "react-router";
 import ProductRating from "../components/ProductRating";
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import ErrorHandler from "../components/errors/ErrorHandler";
 import { IErrorResponse, IProduct } from "../interfaces";
 import ProductDetailsSkeleton from "../components/ProductDetailsSkeleton";
 import axiosInstance from "../config/axios.config";
+import { toaster } from "../components/ui/toaster";
+import { useSelector } from "react-redux";
+import { userAuthSelector } from "../app/features/AuthSlice";
 
 const ProductDetailsPage = () => {
   /*________________states_______________*/
+  const queryClient = useQueryClient();
+  const [isUpdating, setIsUpdating] = useState(false);
+  const {
+    loggedUser: { jwt },
+  } = useSelector(userAuthSelector);
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const { id } = useParams();
 
@@ -49,10 +57,49 @@ const ProductDetailsPage = () => {
     }
   }, [activeImgIndex, data]);
 
+  /*________________Handlers_______________*/
   // Handle clicking images
   const handleImageClick = (index: number) => {
     setActiveImgIndex(index);
   };
+
+  const addToCart = async () => {
+    const ProductToAdd = data
+      ? {
+          title: data.title,
+          price: data.price,
+          rating: data.rating,
+          discountPercentage: data.discountPercentage,
+          quantity: 1,
+          thumbnail: `${import.meta.env.VITE_SERVER_URL}${data.thumbnail.url}`,
+        }
+      : null;
+    try {
+      setIsUpdating(true);
+      await axiosInstance.post(
+        "/carts",
+        { data: ProductToAdd },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      await queryClient.invalidateQueries({ queryKey: ["cart"] });
+      setIsUpdating(false);
+    } catch (error) {
+      setIsUpdating(false);
+      const errorData = error as AxiosError<IErrorResponse>;
+      toaster.create({
+        title: errorData?.response?.data.error.message
+          ? `Failed To Add To Cart : ${errorData?.response?.data.error.message}`
+          : "Failed To Add To Cart : SERVER ERROR",
+        type: "error",
+        duration: 1500,
+      });
+    }
+  };
+
   if (isLoading) return <ProductDetailsSkeleton />;
   if (error)
     return (
@@ -158,7 +205,13 @@ const ProductDetailsPage = () => {
             </Box>
 
             <HStack mt={3}>
-              <Button size="md" _hover={{ bg: "green.600" }}>
+              <Button
+                size="md"
+                _hover={{ bg: "green.600" }}
+                onClick={addToCart}
+                loading={isUpdating}
+                loadingText="Adding…"
+              >
                 Add to Cart
               </Button>
               <Button size="md" _hover={{ bg: "red.600" }}>

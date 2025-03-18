@@ -2,7 +2,14 @@ import { Button, Card, HStack, Image, Text } from "@chakra-ui/react";
 import ProductRating from "./ProductRating";
 import { useColorMode } from "./ui/color-mode";
 import { Link } from "react-router";
-import { IProduct } from "../interfaces";
+import { IErrorResponse, IProduct } from "../interfaces";
+import axiosInstance from "../config/axios.config";
+import { useSelector } from "react-redux";
+import { userAuthSelector } from "../app/features/AuthSlice";
+import { useQueryClient } from "@tanstack/react-query";
+import { toaster } from "./ui/toaster";
+import { AxiosError } from "axios";
+import { useState } from "react";
 interface IProps {
   product: IProduct;
 }
@@ -18,8 +25,47 @@ const ProductCard = ({
   },
 }: IProps) => {
   /*________________states_______________*/
+  const queryClient = useQueryClient();
+  const [isUpdating, setIsUpdating] = useState(false);
   const { colorMode } = useColorMode();
-
+  const {
+    loggedUser: { jwt },
+  } = useSelector(userAuthSelector);
+  /* ________________Handlers_______________*/
+  const addToCart = async () => {
+    const data = {
+      title,
+      price,
+      rating,
+      discountPercentage,
+      quantity: 1,
+      thumbnail: `${import.meta.env.VITE_SERVER_URL}${url}`,
+    };
+    try {
+      setIsUpdating(true);
+      await axiosInstance.post(
+        "/carts",
+        { data },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        }
+      );
+      await queryClient.invalidateQueries({ queryKey: ["cart"] });
+      setIsUpdating(false);
+    } catch (error) {
+      setIsUpdating(false);
+      const errorData = error as AxiosError<IErrorResponse>;
+      toaster.create({
+        title: errorData?.response?.data.error.message
+          ? `Failed To Add To Cart : ${errorData?.response?.data.error.message}`
+          : "Failed To Add To Cart : SERVER ERROR",
+        type: "error",
+        duration: 1500,
+      });
+    }
+  };
   return (
     <Card.Root
       overflow="hidden"
@@ -66,7 +112,13 @@ const ProductCard = ({
         <Link to={`/product/${documentId}`}>
           <Button variant="solid">View Details</Button>
         </Link>
-        <Button variant="ghost" _hover={{ bg: "green.600" }}>
+        <Button
+          variant="ghost"
+          _hover={{ bg: "green.600" }}
+          onClick={addToCart}
+          loading={isUpdating}
+          loadingText="Adding…"
+        >
           Add to cart
         </Button>
       </Card.Footer>

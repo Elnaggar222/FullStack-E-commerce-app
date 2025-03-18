@@ -1,5 +1,12 @@
 //^ using Chakra Templates
-import { Box, Button, Flex, HStack, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { useColorMode } from "./ui/color-mode";
 import { IoSunny, IoMoon } from "react-icons/io5";
 import { useEffect, useState } from "react";
@@ -8,12 +15,19 @@ import ProfileMenu from "./ProfileMenu";
 import NavMenu from "./NavMenu";
 import NavItem from "./NavItem";
 import { NavLinks } from "../data";
+import { useSelector } from "react-redux";
+import { userAuthSelector } from "../app/features/AuthSlice";
+import CartBadge from "./CartBadge";
 
 const Navbar = () => {
   /*_________________States___________________ */
   const { open, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   const [isScrolled, setIsScrolled] = useState(false);
+  const {
+    loggedUser: { jwt },
+  } = useSelector(userAuthSelector);
+  const isLoggedIn = !!jwt;
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 60) {
@@ -65,6 +79,14 @@ const Navbar = () => {
           </HStack>
         </HStack>
         <Box display={"flex"} alignItems={"center"}>
+          {isLoggedIn ? (
+            <ProfileMenu />
+          ) : (
+            <Box display={{ base: "none", md: "flex" }} alignItems={"center"}>
+              <NavItem to={"/signIn"} name={"Sign In"} />
+              <NavItem to={"/signUp"} name={"Sign Up"} />
+            </Box>
+          )}
           <Button
             onClick={toggleColorMode}
             bg={"transparent"}
@@ -74,12 +96,12 @@ const Navbar = () => {
             _hover={{ transform: "scale(1.2)", opacity: 1 }}
           >
             {colorMode === "light" ? (
-              <IoMoon color="black" />
+              <Icon as={IoMoon} color="black" />
             ) : (
-              <IoSunny color="white" />
+              <Icon as={IoSunny} color="white" />
             )}
           </Button>
-          <ProfileMenu />
+          <CartBadge />
         </Box>
       </Flex>
     </Box>

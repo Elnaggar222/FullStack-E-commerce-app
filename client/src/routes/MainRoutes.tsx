@@ -11,9 +11,12 @@ import SignIn from "../pages/SignIn";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import { useSelector } from "react-redux";
 import { userAuthSelector } from "../app/features/AuthSlice";
+import CartPage from "../pages/Cart";
 
 const MainRoutes = () => {
-  const { jwt } = useSelector(userAuthSelector);
+  const {
+    loggedUser: { jwt },
+  } = useSelector(userAuthSelector);
   const isLoggedIn = !!jwt;
   return (
     <Routes>
@@ -21,6 +24,7 @@ const MainRoutes = () => {
         <Route index element={<HomePage />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="products" element={<ProductsPage />} />
+        <Route path="cart" element={<CartPage />} />
         <Route path="product/:id" element={<ProductDetailsPage />} />
       </Route>
       <Route

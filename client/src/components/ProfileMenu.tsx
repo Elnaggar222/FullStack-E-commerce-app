@@ -1,9 +1,17 @@
 import { Box, Flex, Image, Text } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { userAuthSelector } from "../app/features/AuthSlice";
 
 const ProfileMenu = () => {
+  /*_______________States________________ */
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const {
+    loggedUser: {
+      user: { username },
+    },
+  } = useSelector(userAuthSelector);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -18,7 +26,7 @@ const ProfileMenu = () => {
     }
 
     return () => {
-      //React runs the cleanup function before re-running the effect when dependencies change.
+      //React runs the cleanup function before re-running the useEffect when dependencies change.
       //Event listener is removed when the menu is closed.
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -64,7 +72,7 @@ const ProfileMenu = () => {
             alt="User Avatar"
           />
           <Text fontWeight="bold" mt={2}>
-            Username
+            {username || "username"}
           </Text>
         </Flex>
 

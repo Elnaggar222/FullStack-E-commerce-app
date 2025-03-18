@@ -10,7 +10,7 @@ const NavItem = ({ name, to }: { name: string; to: string }) => {
       {/* NavLink provides an isActive function that returns true if the link is currently active*/}
       {({ isActive }) => (
         <Box
-          fontSize={"md"}
+          fontSize={"sm"}
           px={3}
           py={2}
           rounded={"md"}
