@@ -8,6 +8,7 @@ interface IUseCustomQuery {
   config?: AxiosRequestConfig;
   method?: "get" | "post" | "put" | "delete";
   body?: unknown;
+  enabled?: boolean;
 }
 
 // TData and TError are optional types to send
@@ -17,6 +18,7 @@ const useCustomQuery = <TData = unknown, TError = unknown>({
   config,
   method = "get",
   body,
+  enabled = true,
 }: IUseCustomQuery) => {
   return useQuery<TData, AxiosError<TError>>({
     queryKey,
@@ -35,6 +37,7 @@ const useCustomQuery = <TData = unknown, TError = unknown>({
       return data;
     },
     retry: 0,
+    enabled,
   });
 };
 

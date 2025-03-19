@@ -10,6 +10,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toaster } from "./ui/toaster";
 import { AxiosError } from "axios";
 import { useState } from "react";
+import { useAppDispatch } from "../app/store";
+import { addToCartAction } from "../app/features/LocalCart";
 interface IProps {
   product: IProduct;
 }
@@ -28,12 +30,15 @@ const ProductCard = ({
   const queryClient = useQueryClient();
   const [isUpdating, setIsUpdating] = useState(false);
   const { colorMode } = useColorMode();
+  const dispatch = useAppDispatch();
   const {
     loggedUser: { jwt },
   } = useSelector(userAuthSelector);
+  const isLoggedIn = !!jwt;
   /* ________________Handlers_______________*/
-  const addToCart = async () => {
+  const addToCartHandler = async () => {
     const data = {
+      product_id: documentId,
       title,
       price,
       rating,
@@ -41,6 +46,10 @@ const ProductCard = ({
       quantity: 1,
       thumbnail: `${import.meta.env.VITE_SERVER_URL}${url}`,
     };
+    if (!isLoggedIn) {
+      dispatch(addToCartAction({ ...data }));
+      return;
+    }
     try {
       setIsUpdating(true);
       await axiosInstance.post(
@@ -115,7 +124,7 @@ const ProductCard = ({
         <Button
           variant="ghost"
           _hover={{ bg: "green.600" }}
-          onClick={addToCart}
+          onClick={addToCartHandler}
           loading={isUpdating}
           loadingText="Adding…"
         >

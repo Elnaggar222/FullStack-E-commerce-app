@@ -39,6 +39,9 @@
     "quantity": {
       "type": "biginteger",
       "default": "1"
+    },
+    "product_id": {
+      "type": "string"
     }
   }
 }

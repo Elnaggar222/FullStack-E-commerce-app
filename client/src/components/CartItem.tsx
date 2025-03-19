@@ -22,6 +22,12 @@ import { userAuthSelector } from "../app/features/AuthSlice";
 import { useSelector } from "react-redux";
 import { useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { useAppDispatch } from "../app/store";
+import {
+  decreaseQuantityAction,
+  increaseQuantityAction,
+  removeItemAction,
+} from "../app/features/LocalCart";
 
 interface IProps {
   cartItem: ICart;
@@ -29,10 +35,11 @@ interface IProps {
 
 const CartItem = ({
   cartItem: {
+    documentId,
+    product_id,
     title,
     discountPercentage,
     price,
-    documentId,
     quantity,
     rating,
     thumbnail,
@@ -49,11 +56,17 @@ const CartItem = ({
   const {
     loggedUser: { jwt },
   } = useSelector(userAuthSelector);
+  const isLoggedIn = !!jwt;
+  const dispatch = useAppDispatch();
   /*________________Handlers_______________ */
-  const handleRemove = async (cartToRemoveId: string) => {
+  const handleRemove = async () => {
+    if (!isLoggedIn) {
+      dispatch(removeItemAction(product_id));
+      return;
+    }
     setIsUpdating(true);
     try {
-      await axiosInstance.delete(`/carts/${cartToRemoveId}`, {
+      await axiosInstance.delete(`/carts/${documentId}`, {
         headers: {
           Authorization: `Bearer ${jwt}`,
         },
@@ -72,14 +85,15 @@ const CartItem = ({
       });
     }
   };
-  const handleQuantityIncrement = async (
-    cartIdToIncrement: string,
-    prevQuantity: number
-  ) => {
+  const handleQuantityIncrement = async (prevQuantity: number) => {
+    if (!isLoggedIn) {
+      dispatch(increaseQuantityAction(product_id));
+      return;
+    }
     setIsIncrementing(true);
     try {
       await axiosInstance.put(
-        `/carts/${cartIdToIncrement}`,
+        `/carts/${documentId}`,
         { data: { quantity: prevQuantity + 1 } },
         {
           headers: {
@@ -101,14 +115,18 @@ const CartItem = ({
       });
     }
   };
-  const handleQuantityDecrement = async (
-    cartIdToDecrement: string,
-    prevQuantity: number
-  ) => {
+  const handleQuantityDecrement = async (prevQuantity: number) => {
+    if (prevQuantity - 1 < 1) {
+      return;
+    }
+    if (!isLoggedIn) {
+      dispatch(decreaseQuantityAction(product_id));
+      return;
+    }
     setIsDecrementing(true);
     try {
       await axiosInstance.put(
-        `/carts/${cartIdToDecrement}`,
+        `/carts/${documentId}`,
         { data: { quantity: prevQuantity - 1 < 1 ? 1 : prevQuantity - 1 } },
         {
           headers: {
@@ -191,7 +209,7 @@ const CartItem = ({
             _hover={{ transform: "scale(1.3)", opacity: 1 }}
             disabled={quantity == 1}
             _disabled={{ opacity: 0.4 }}
-            onClick={() => handleQuantityDecrement(documentId, +quantity)}
+            onClick={() => handleQuantityDecrement(+quantity)}
             loading={isDecrementing}
             _loading={{ opacity: 1, color: "red" }}
           >
@@ -214,7 +232,7 @@ const CartItem = ({
             opacity={0.9}
             _hover={{ transform: "scale(1.3)", opacity: 1 }}
             _disabled={{ opacity: 0.4 }}
-            onClick={() => handleQuantityIncrement(documentId, +quantity)}
+            onClick={() => handleQuantityIncrement(+quantity)}
             loading={isIncrementing}
             _loading={{ opacity: 1, color: "red" }}
           >
@@ -229,7 +247,7 @@ const CartItem = ({
         <IconButton
           aria-label="remove item"
           rounded="full"
-          onClick={() => handleRemove(documentId)}
+          onClick={handleRemove}
           loading={isUpdating}
         >
           <FaTrashAlt />

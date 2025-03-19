@@ -56,13 +56,14 @@ export interface ILoggedUser {
   };
 }
 export interface ICart {
-  quantity: number;
-  discountPercentage: number;
-  documentId: string;
-  price: number;
-  rating: number;
+  documentId?: string;
+  product_id: string;
   title: string;
+  price: number;
+  discountPercentage: number;
+  rating: number;
   thumbnail: string;
+  quantity: number;
 }
 export interface IUserProfile {
   carts: ICart[];

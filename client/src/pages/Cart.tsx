@@ -20,6 +20,7 @@ import CartSkeleton from "../components/CartSkeleton ";
 import ErrorHandler from "../components/errors/ErrorHandler";
 import CartItem from "../components/CartItem";
 import { calculateSummary } from "../utils/functions";
+import { localCartSelector } from "../app/features/LocalCart";
 
 const CartPage = () => {
   /*________________States_______________ */
@@ -27,6 +28,8 @@ const CartPage = () => {
   const {
     loggedUser: { jwt },
   } = useSelector(userAuthSelector);
+  const isLoggedIn = !!jwt;
+  const { localCartItems } = useSelector(localCartSelector);
 
   /*________________react query_______________*/
   const { data, isLoading, error } = useCustomQuery<
@@ -40,12 +43,15 @@ const CartPage = () => {
         Authorization: `Bearer ${jwt}`,
       },
     },
+    enabled: isLoggedIn,
   });
 
   /*________________Handlers_______________ */
   /*________________renders_______________ */
-  const renderCart = data?.carts.map((cartItem) => (
-    <CartItem key={cartItem.documentId} cartItem={cartItem} />
+  // Use API cart if logged in; otherwise, use local cart
+  const cartItems = isLoggedIn ? data?.carts || [] : localCartItems;
+  const renderCart = cartItems.map((cartItem) => (
+    <CartItem key={cartItem.product_id} cartItem={cartItem} />
   ));
   if (isLoading) return <CartSkeleton />;
   if (error) {
@@ -57,14 +63,14 @@ const CartPage = () => {
       />
     );
   }
-  const carts = data?.carts || [];
-  const { subtotal, totalDiscount, totalPrice } = calculateSummary(carts);
+
+  const { subtotal, totalDiscount, totalPrice } = calculateSummary(cartItems);
   return (
     <Box>
       <Heading textAlign="center" color="green.600">
         Your Bag
       </Heading>
-      {data && data.carts && data.carts.length > 0 ? (
+      {cartItems && cartItems.length > 0 ? (
         <>
           <Flex
             mt={8}

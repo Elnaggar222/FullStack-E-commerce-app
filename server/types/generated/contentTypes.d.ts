@@ -390,6 +390,7 @@ export interface ApiCartCart extends Struct.CollectionTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::cart.cart'> &
       Schema.Attribute.Private;
     price: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
+    product_id: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     quantity: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<'1'>;
     rating: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;

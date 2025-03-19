@@ -8,6 +8,8 @@ import { useSelector } from "react-redux";
 import { userAuthSelector } from "../app/features/AuthSlice";
 import { toaster } from "./ui/toaster";
 import { useEffect, useRef } from "react";
+import { localCartSelector } from "../app/features/LocalCart";
+import { itemCountHandler } from "../utils/functions";
 
 const CartBadge = () => {
   /*________________States_______________ */
@@ -17,6 +19,8 @@ const CartBadge = () => {
   const {
     loggedUser: { jwt },
   } = useSelector(userAuthSelector);
+  const isLoggedIn = !!jwt;
+  const { localCartItems } = useSelector(localCartSelector);
   /*________________react query_______________*/
   const { data, isLoading, error } = useCustomQuery<
     IUserProfile,
@@ -29,13 +33,13 @@ const CartBadge = () => {
         Authorization: `Bearer ${jwt}`,
       },
     },
+    enabled: isLoggedIn,
   });
 
+  // Use API cart if logged in; otherwise, use local cart
+  const cartItems = isLoggedIn ? data?.carts || [] : localCartItems;
   // ✅ Calculate cart item count safely
-  const itemCount =
-    data?.carts?.reduce((acc, item) => {
-      return acc + +item.quantity;
-    }, 0) || 0;
+  const itemsCount = itemCountHandler(cartItems);
 
   useEffect(() => {
     if (error && !hasShownError.current) {
@@ -72,7 +76,7 @@ const CartBadge = () => {
         fontSize="xs"
         borderRadius="full"
       >
-        {isLoading ? <Spinner size="sm" /> : itemCount}
+        {isLoading ? <Spinner size="sm" /> : itemsCount}
       </Badge>
     </Flex>
   );

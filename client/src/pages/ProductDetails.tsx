@@ -21,6 +21,8 @@ import axiosInstance from "../config/axios.config";
 import { toaster } from "../components/ui/toaster";
 import { useSelector } from "react-redux";
 import { userAuthSelector } from "../app/features/AuthSlice";
+import { useAppDispatch } from "../app/store";
+import { addToCartAction } from "../app/features/LocalCart";
 
 const ProductDetailsPage = () => {
   /*________________states_______________*/
@@ -29,6 +31,8 @@ const ProductDetailsPage = () => {
   const {
     loggedUser: { jwt },
   } = useSelector(userAuthSelector);
+  const isLoggedIn = !!jwt;
+  const dispatch = useAppDispatch();
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const { id } = useParams();
 
@@ -64,16 +68,21 @@ const ProductDetailsPage = () => {
   };
 
   const addToCart = async () => {
-    const ProductToAdd = data
-      ? {
-          title: data.title,
-          price: data.price,
-          rating: data.rating,
-          discountPercentage: data.discountPercentage,
-          quantity: 1,
-          thumbnail: `${import.meta.env.VITE_SERVER_URL}${data.thumbnail.url}`,
-        }
-      : null;
+    //* Non-null Assertion Operator
+    //data! => Tells TypeScript "I know this is not undefined"
+    const ProductToAdd = data! && {
+      product_id: data.documentId,
+      title: data.title,
+      price: data.price,
+      rating: data.rating,
+      discountPercentage: data.discountPercentage,
+      quantity: 1,
+      thumbnail: `${import.meta.env.VITE_SERVER_URL}${data.thumbnail.url}`,
+    };
+    if (!isLoggedIn) {
+      dispatch(addToCartAction({ ...ProductToAdd }));
+      return;
+    }
     try {
       setIsUpdating(true);
       await axiosInstance.post(

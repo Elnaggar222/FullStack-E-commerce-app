@@ -23,3 +23,31 @@ export const calculateSummary = (carts: ICart[]) => {
 
   return { subtotal, totalDiscount, totalPrice };
 };
+
+export const addToCartHandler = (cartItems: ICart[], ItemToAdd: ICart) => {
+  const isExisted = cartItems.find(
+    (item) => item.product_id === ItemToAdd.product_id
+  );
+  if (isExisted)
+    return cartItems.map((item) =>
+      item.product_id === ItemToAdd.product_id
+        ? { ...item, quantity: +item.quantity + 1 }
+        : item
+    );
+  return [...cartItems, ItemToAdd];
+};
+export const IncreaseQuantityHandler = (cartItems: ICart[], ItemId: string) =>
+  cartItems.map((item) =>
+    item.product_id === ItemId ? { ...item, quantity: item.quantity + 1 } : item
+  );
+
+export const decreaseQuantityHandler = (cartItems: ICart[], ItemId: string) =>
+  cartItems.map((item) =>
+    item.product_id === ItemId
+      ? { ...item, quantity: item.quantity - 1 < 1 ? 1 : item.quantity - 1 }
+      : item
+  );
+
+// ✅ Calculate cart items count safely
+export const itemCountHandler = (cartItems: ICart[]): number =>
+  cartItems.reduce((acc, item) => acc + +item.quantity, 0);
