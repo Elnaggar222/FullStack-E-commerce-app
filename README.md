@@ -86,7 +86,7 @@ npm install
 npm run develop
 ```
 
-> # Strapi Configuration
+> ### Strapi Configuration
 > **Note:**
 > Rename the `.env.example` file to `.env` and ensure all required environment variables are configured for Strapi. If your Strapi setup requires database configuration or admin login, be sure to follow the Strapi documentation to set up your default admin account and any other required configurations.
 
