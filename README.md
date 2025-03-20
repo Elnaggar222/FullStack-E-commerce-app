@@ -64,7 +64,6 @@ An E-Commerce application built using **React, TypeScript, and Vite**, integrate
 ## 🛠️ Setup & Installation
 
 ### Clone the repository
-Click the copy button to copy the command.
 
 ```sh
 git clone https://github.com/Elnaggar222/FullStack-E-commerce-app.git
@@ -72,7 +71,6 @@ cd FullStack-E-commerce-app
 ```
 
 ### Client Setup
-Click the copy button to copy the command.
 
 ```sh
 cd client
@@ -81,7 +79,6 @@ npm run dev
 ```
 
 ### Backend Setup (Strapi)
-Click the copy button to copy the command.
 
 ```sh
 cd backend
