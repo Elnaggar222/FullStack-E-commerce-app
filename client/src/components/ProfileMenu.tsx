@@ -1,10 +1,12 @@
 import { Box, Flex, Image, Text } from "@chakra-ui/react";
 import { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { userAuthSelector } from "../app/features/AuthSlice";
+import { logoutAction, userAuthSelector } from "../app/features/AuthSlice";
+import { useAppDispatch } from "../app/store";
 
 const ProfileMenu = () => {
   /*_______________States________________ */
+  const dispatch = useAppDispatch();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const {
@@ -91,7 +93,8 @@ const ProfileMenu = () => {
           color="red.500"
           fontWeight="bold"
           _hover={{ bg: "red.100" }}
-          _dark={{ _hover: { bg: "red.600", color: "red.200" } }}
+          _dark={{ _hover: { bg: "red.600", color: "white" } }}
+          onClick={() => dispatch(logoutAction())}
         >
           Logout
         </Text>

@@ -22,7 +22,7 @@ import { toaster } from "../components/ui/toaster";
 import { useSelector } from "react-redux";
 import { userAuthSelector } from "../app/features/AuthSlice";
 import { useAppDispatch } from "../app/store";
-import { addToCartAction } from "../app/features/LocalCart";
+import { addToCartAction } from "../app/features/LocalCartSlice";
 
 const ProductDetailsPage = () => {
   /*________________states_______________*/

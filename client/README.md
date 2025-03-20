@@ -38,3 +38,12 @@ loading skeleton for cart page and cart Badge Icon
 Error handling for cart fetch and add to cart and delete from cart
 added reusable customQuery Hook For react Query Fetchings
 In Cart Page User can Decrease , Increase Quantity of each item and Delete any item with perfect Loading on every delete, update any item Quantity
+
+<!-- ################# -->
+
+Now Unauthenticated users can add to local cart which is persisted in local storage using redux-toolkit persistor
+and when user login all userInfo is persisted too in local storage using redux-toolkit persistor .
+
+after user login => all cart items added before login is added to user account (if product already existed quantity is increased , if not added as new item in cart) then local cart is cleared
+
+<!-- ################# -->
