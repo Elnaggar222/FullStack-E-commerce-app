@@ -11,7 +11,7 @@ import { toaster } from "./ui/toaster";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { useAppDispatch } from "../app/store";
-import { addToCartAction } from "../app/features/LocalCart";
+import { addToCartAction } from "../app/features/LocalCartSlice";
 interface IProps {
   product: IProduct;
 }

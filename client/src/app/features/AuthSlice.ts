@@ -9,7 +9,8 @@ import {
 import { RootState } from "../store";
 import { toaster } from "../../components/ui/toaster";
 import { AxiosError } from "axios";
-import CookieService from "../../services/CookieService";
+import MergeLocalCart from "../../services/MergeLocalCart";
+import { clearLocalCartAction } from "./LocalCartSlice";
 
 interface IInitialState {
   loggedUser: ILoggedUser;
@@ -41,11 +42,21 @@ export const getUserAuth = createAsyncThunk(
     },
     thunkAPI
   ) => {
-    const { rejectWithValue } = thunkAPI;
+    const { rejectWithValue, dispatch, getState } = thunkAPI;
     try {
       const endpoint =
         type === "Sign Up" ? "/auth/local/register" : "/auth/local";
-      const { data } = await axiosInstance.post(endpoint, userInfo);
+      const { data } = await axiosInstance.post<ILoggedUser>(
+        endpoint,
+        userInfo
+      );
+      const {
+        localCart: { localCartItems },
+      } = getState() as RootState;
+      // Merge local cart with the server cart after login
+      await MergeLocalCart(data.jwt, localCartItems);
+      //clear the local cart now that it's merged
+      dispatch(clearLocalCartAction());
       return data;
     } catch (error) {
       return rejectWithValue(error);
@@ -56,7 +67,18 @@ export const getUserAuth = createAsyncThunk(
 export const userAuthSlice = createSlice({
   name: "userAuth",
   initialState,
-  reducers: {},
+  reducers: {
+    logoutAction: (state) => {
+      state.loggedUser = initialState.loggedUser;
+      state.isLoading = false;
+      state.error = null;
+      toaster.create({
+        title: "Logged out successfully",
+        type: "success",
+        duration: 1500,
+      });
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getUserAuth.pending, (state) => {
@@ -67,23 +89,12 @@ export const userAuthSlice = createSlice({
       .addCase(getUserAuth.fulfilled, (state, action) => {
         state.isLoading = false;
         state.loggedUser = action.payload;
-
         // Determine message based on action meta
         const actionType = action.meta.arg.type;
         const successMessage =
           actionType === "Sign Up"
             ? "Account Created Successfully"
             : "Logged in Successfully";
-
-        const DateNow = new Date();
-        const In_Days = 3;
-        // Expiration Date in Milliseconds
-        const ExpIn_Days = DateNow.setTime(
-          DateNow.getTime() + 24 * 60 * 60 * 1000 * In_Days
-        );
-        const options = { path: "/", expires: new Date(ExpIn_Days) };
-        CookieService.setCookie("loggedUser", state.loggedUser, options);
-
         toaster.create({
           title: successMessage,
           type: "success",
@@ -106,5 +117,6 @@ export const userAuthSlice = createSlice({
       });
   },
 });
+export const { logoutAction } = userAuthSlice.actions;
 export const userAuthSelector = ({ userAuth }: RootState) => userAuth;
 export default userAuthSlice;

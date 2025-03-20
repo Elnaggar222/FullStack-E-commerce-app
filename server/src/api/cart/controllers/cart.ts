@@ -5,7 +5,7 @@ export default factories.createCoreController(
   ({ strapi }) => ({
     async create(ctx) {
       try {
-        // Ensure the user is authenticated
+        // Get authenticated user's ID from JWT
         const user = ctx.state.user;
         if (!user) {
           return ctx.unauthorized(
@@ -19,38 +19,37 @@ export default factories.createCoreController(
           return ctx.badRequest("Missing cart data.");
         }
 
-        // Look for an existing cart item for the same product and user.
-        // Note: Use the appropriate service method depending on your Strapi version.
-        const existingCartItems = await strapi.entityService.findMany(
+        // Attach the authenticated user's id to the data
+        data.user = user.id;
+
+        // Check if a cart item with the same product_id already exists for this user
+        const existingItems = await strapi.entityService.findMany(
           "api::cart.cart",
           {
             filters: {
-              product_id: data.product_id, // using product_id field
-              user: user.id, // only the current user's cart items
+              product_id: data.product_id,
+              user: user.id,
             },
           }
         );
 
-        if (existingCartItems && existingCartItems.length > 0) {
-          // If the product already exists in the cart, update the quantity.
-          // Here, we assume that the new item is always added with quantity 1.
-          const existingItem = existingCartItems[0];
-          const newQuantity = +existingItem.quantity + 1;
+        if (existingItems && existingItems.length > 0) {
+          // If the item exists, update its quantity.
+          const existingItem = existingItems[0];
+          // Calculate new quantity:
+          // Use the quantity provided in the request (default is 1) and add it to the existing quantity.
+          const newQuantity = +existingItem.quantity + (data.quantity || 1);
 
           const updatedCart = await strapi.entityService.update(
             "api::cart.cart",
             existingItem.id,
             {
-              data: {
-                quantity: newQuantity,
-              },
+              data: { quantity: newQuantity },
             }
           );
           return ctx.created(updatedCart);
         } else {
-          // If no existing cart item, attach the user id and create a new cart record.
-          data.user = user.id;
-          // Optionally ensure data.quantity is set; default to 1 if not provided.
+          // If the item does not exist, ensure quantity is set (default to 1 if not provided)
           if (!data.quantity) {
             data.quantity = 1;
           }

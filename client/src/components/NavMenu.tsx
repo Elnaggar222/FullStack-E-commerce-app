@@ -4,7 +4,7 @@ import { IoClose } from "react-icons/io5";
 import { useColorMode } from "./ui/color-mode";
 import { NavLinks } from "../data";
 import NavItem from "./NavItem";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { userAuthSelector } from "../app/features/AuthSlice";
 
@@ -16,7 +16,6 @@ interface IProps {
 const NavMenu = ({ open, onClose, onOpen }: IProps) => {
   /**_________________States___________________ */
   const { colorMode } = useColorMode();
-  const menuRef = useRef<HTMLDivElement | null>(null);
   const {
     loggedUser: { jwt },
   } = useSelector(userAuthSelector);
@@ -24,10 +23,8 @@ const NavMenu = ({ open, onClose, onOpen }: IProps) => {
 
   // Function to close menu when clicking outside
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        onClose();
-      }
+    function handleClickOutside() {
+      onClose();
     }
     if (open) {
       document.addEventListener("click", handleClickOutside);
@@ -42,7 +39,6 @@ const NavMenu = ({ open, onClose, onOpen }: IProps) => {
   return (
     <>
       <Box
-        ref={menuRef}
         cursor={"pointer"}
         display={{ md: "none" }}
         onClick={(e) => {
@@ -63,7 +59,6 @@ const NavMenu = ({ open, onClose, onOpen }: IProps) => {
         )}
       </Box>
       <Box
-        ref={menuRef}
         position={"absolute"}
         w={"full"}
         left={0}

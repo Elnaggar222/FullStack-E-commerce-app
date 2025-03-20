@@ -40,6 +40,9 @@ export const LocalCartSlice = createSlice({
         action.payload
       );
     },
+    clearLocalCartAction: (state) => {
+      state.localCartItems = [];
+    },
   },
 });
 
@@ -48,6 +51,7 @@ export const {
   decreaseQuantityAction,
   increaseQuantityAction,
   removeItemAction,
+  clearLocalCartAction,
 } = LocalCartSlice.actions;
 export const localCartSelector = ({ localCart }: RootState) => localCart;
 export default LocalCartSlice;
