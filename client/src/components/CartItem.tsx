@@ -27,7 +27,7 @@ import {
   decreaseQuantityAction,
   increaseQuantityAction,
   removeItemAction,
-} from "../app/features/LocalCart";
+} from "../app/features/LocalCartSlice";
 
 interface IProps {
   cartItem: ICart;
@@ -47,7 +47,7 @@ const CartItem = ({
 }: IProps) => {
   /*________________States_______________ */
   const queryClient = useQueryClient();
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isIncrementing, setIsIncrementing] = useState(false);
   const [isDecrementing, setIsDecrementing] = useState(false);
   // On small screens (base), the star size is 17px.
@@ -64,7 +64,7 @@ const CartItem = ({
       dispatch(removeItemAction(product_id));
       return;
     }
-    setIsUpdating(true);
+    setIsDeleting(true);
     try {
       await axiosInstance.delete(`/carts/${documentId}`, {
         headers: {
@@ -72,9 +72,9 @@ const CartItem = ({
         },
       });
       await queryClient.invalidateQueries({ queryKey: ["cart"] });
-      setIsUpdating(false);
+      setIsDeleting(false);
     } catch (error) {
-      setIsUpdating(false);
+      setIsDeleting(false);
       const errorData = error as AxiosError<IErrorResponse>;
       toaster.create({
         title: errorData?.response?.data.error.message
@@ -248,7 +248,7 @@ const CartItem = ({
           aria-label="remove item"
           rounded="full"
           onClick={handleRemove}
-          loading={isUpdating}
+          loading={isDeleting}
         >
           <FaTrashAlt />
         </IconButton>

@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { userAuthSelector } from "../app/features/AuthSlice";
 import { toaster } from "./ui/toaster";
 import { useEffect, useRef } from "react";
-import { localCartSelector } from "../app/features/LocalCart";
+import { localCartSelector } from "../app/features/LocalCartSlice";
 import { itemCountHandler } from "../utils/functions";
 
 const CartBadge = () => {

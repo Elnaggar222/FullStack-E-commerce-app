@@ -20,10 +20,21 @@ import CartSkeleton from "../components/CartSkeleton ";
 import ErrorHandler from "../components/errors/ErrorHandler";
 import CartItem from "../components/CartItem";
 import { calculateSummary } from "../utils/functions";
-import { localCartSelector } from "../app/features/LocalCart";
+import {
+  clearLocalCartAction,
+  localCartSelector,
+} from "../app/features/LocalCartSlice";
+import { useAppDispatch } from "../app/store";
+import axiosInstance from "../config/axios.config";
+import { toaster } from "../components/ui/toaster";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 const CartPage = () => {
   /*________________States_______________ */
+  const [isClearing, setIsClearing] = useState(false);
+  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const {
     loggedUser: { jwt },
@@ -47,6 +58,34 @@ const CartPage = () => {
   });
 
   /*________________Handlers_______________ */
+  const clearCartHandler = async () => {
+    if (!isLoggedIn) {
+      dispatch(clearLocalCartAction());
+      return;
+    }
+    setIsClearing(true);
+    try {
+      for (const { documentId } of data!.carts) {
+        await axiosInstance.delete(`/carts/${documentId}`, {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        });
+      }
+      await queryClient.invalidateQueries({ queryKey: ["cart"] });
+      setIsClearing(false);
+    } catch (error) {
+      setIsClearing(false);
+      const errorData = error as AxiosError<IErrorResponse>;
+      toaster.create({
+        title: errorData?.response?.data.error.message
+          ? `Error Clearing Cart : ${errorData?.response?.data.error.message}`
+          : "Error Clearing Cart : SERVER ERROR",
+        type: "error",
+        duration: 1500,
+      });
+    }
+  };
   /*________________renders_______________ */
   // Use API cart if logged in; otherwise, use local cart
   const cartItems = isLoggedIn ? data?.carts || [] : localCartItems;
@@ -136,6 +175,8 @@ const CartPage = () => {
                 bg="red.600"
                 color={"white"}
                 _hover={{ bg: "red.500" }}
+                onClick={clearCartHandler}
+                loading={isClearing}
               >
                 CLEAR CART
               </Button>
