@@ -96,7 +96,7 @@ const ProfileMenu = () => {
           _dark={{ _hover: { bg: "red.600", color: "white" } }}
           onClick={() => dispatch(logoutAction())}
         >
-          Logout
+          Sign out
         </Text>
       </Box>
     </Box>

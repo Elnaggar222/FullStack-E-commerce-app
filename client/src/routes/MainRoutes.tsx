@@ -12,6 +12,12 @@ import ProtectedRoute from "../components/auth/ProtectedRoute";
 import { useSelector } from "react-redux";
 import { userAuthSelector } from "../app/features/AuthSlice";
 import CartPage from "../pages/Cart";
+import DashboardLayout from "../pages/Dashboard/Layout";
+import DashboardHomePage from "../pages/Dashboard";
+import DashboardProductsPage from "../pages/Dashboard/DashboardProducts";
+import DashboardUsersPage from "../pages/Dashboard/DashboardUsers";
+import DashboardCartsPage from "../pages/Dashboard/DashboardCarts";
+import DashboardCategoriesPage from "../pages/Dashboard/DashboardCategories";
 
 const MainRoutes = () => {
   const {
@@ -26,6 +32,17 @@ const MainRoutes = () => {
         <Route path="products" element={<ProductsPage />} />
         <Route path="cart" element={<CartPage />} />
         <Route path="product/:id" element={<ProductDetailsPage />} />
+      </Route>
+      <Route
+        path="/dashboard"
+        element={<DashboardLayout />}
+        errorElement={<ErrorHandler />}
+      >
+        <Route index element={<DashboardHomePage />} />
+        <Route path="products" element={<DashboardProductsPage />} />
+        <Route path="categories" element={<DashboardCategoriesPage />} />
+        <Route path="users" element={<DashboardUsersPage />} />
+        <Route path="carts" element={<DashboardCartsPage />} />
       </Route>
       <Route
         path="/signUp"

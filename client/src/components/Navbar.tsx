@@ -1,28 +1,21 @@
 //^ using Chakra Templates
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Icon,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Flex, HStack, useDisclosure } from "@chakra-ui/react";
 import { useColorMode } from "./ui/color-mode";
-import { IoSunny, IoMoon } from "react-icons/io5";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import ProfileMenu from "./ProfileMenu";
 import NavMenu from "./NavMenu";
 import NavItem from "./NavItem";
-import { NavLinks } from "../data";
+import { userNavLinks } from "../data";
 import { useSelector } from "react-redux";
 import { userAuthSelector } from "../app/features/AuthSlice";
 import CartBadge from "./CartBadge";
+import ModeButton from "./ModeButton";
 
 const Navbar = () => {
   /*_________________States___________________ */
   const { open, onOpen, onClose } = useDisclosure();
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode } = useColorMode();
   const [isScrolled, setIsScrolled] = useState(false);
   const {
     loggedUser: { jwt },
@@ -68,12 +61,17 @@ const Navbar = () => {
         <NavMenu open={open} onClose={onClose} onOpen={onOpen} />
         <HStack alignItems={"center"}>
           <Link to={"/"}>
-            <Box fontSize={"2xl"} fontWeight={"bold"} cursor={"pointer"}>
+            <Box
+              fontSize={"3xl"}
+              fontWeight={"bold"}
+              cursor={"pointer"}
+              fontFamily="monospace"
+            >
               Amazon+
             </Box>
           </Link>
           <HStack as={"nav"} display={{ base: "none", md: "flex" }}>
-            {NavLinks.map(({ name, to }) => (
+            {userNavLinks.map(({ name, to }) => (
               <NavItem key={name} to={to} name={name} />
             ))}
           </HStack>
@@ -87,20 +85,7 @@ const Navbar = () => {
               <NavItem to={"/signUp"} name={"Sign Up"} />
             </Box>
           )}
-          <Button
-            onClick={toggleColorMode}
-            bg={"transparent"}
-            p={0}
-            transition="opacity 0.3s, transform 0.3s"
-            opacity={0.9}
-            _hover={{ transform: "scale(1.2)", opacity: 1 }}
-          >
-            {colorMode === "light" ? (
-              <Icon as={IoMoon} color="black" />
-            ) : (
-              <Icon as={IoSunny} color="white" />
-            )}
-          </Button>
+          <ModeButton />
           <CartBadge />
         </Box>
       </Flex>

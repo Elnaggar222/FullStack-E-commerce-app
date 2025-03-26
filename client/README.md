@@ -41,9 +41,13 @@ In Cart Page User can Decrease , Increase Quantity of each item and Delete any i
 
 <!-- ################# -->
 
-Now Unauthenticated users can add to local cart which is persisted in local storage using redux-toolkit persistor
-and when user login all userInfo is persisted too in local storage using redux-toolkit persistor .
+Unauthenticated users can now add items to a local cart, which is persistently stored in localStorage using Redux Toolkit Persistor. Additionally, user information is also stored in localStorage upon login.
 
-after user login => all cart items added before login is added to user account (if product already existed quantity is increased , if not added as new item in cart) then local cart is cleared
+When a user logs in:
+
+All items from the local cart are automatically added to their account cart in the database.
+If an item already exists in the user’s cart, its quantity is updated accordingly.
+If the item is new, it is added as a separate entry.
+After merging, the local cart is cleared, ensuring a seamless transition between guest and authenticated shopping.
 
 <!-- ################# -->

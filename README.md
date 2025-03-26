@@ -64,7 +64,6 @@ An E-Commerce application built using **React, TypeScript, and Vite**, integrate
 ## 🛠️ Setup & Installation
 
 ### Clone the repository
-Click the copy button to copy the command.
 
 ```sh
 git clone https://github.com/Elnaggar222/FullStack-E-commerce-app.git
@@ -72,7 +71,6 @@ cd FullStack-E-commerce-app
 ```
 
 ### Client Setup
-Click the copy button to copy the command.
 
 ```sh
 cd client
@@ -81,7 +79,6 @@ npm run dev
 ```
 
 ### Backend Setup (Strapi)
-Click the copy button to copy the command.
 
 ```sh
 cd backend
@@ -89,8 +86,9 @@ npm install
 npm run develop
 ```
 
-> **Note:**  
-> Ensure you configure the required environment variables (`.env` file) for Strapi if needed. Additionally, if your Strapi setup requires database configuration or admin login, be sure to follow the Strapi documentation to set up your default admin account and any other required configurations.
+> ### Strapi Configuration
+> **Note:**
+> Rename the `.env.example` file to `.env` and ensure all required environment variables are configured for Strapi. If your Strapi setup requires database configuration or admin login, be sure to follow the Strapi documentation to set up your default admin account and any other required configurations.
 
 ## 👨‍💻 Contributing
 Feel free to submit issues, pull requests, or feature suggestions!

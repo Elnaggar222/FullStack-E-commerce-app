@@ -108,7 +108,6 @@ const ProductDetailsPage = () => {
       });
     }
   };
-
   if (isLoading) return <ProductDetailsSkeleton />;
   if (error)
     return (

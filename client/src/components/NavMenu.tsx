@@ -2,7 +2,7 @@ import { Box, Icon, Stack } from "@chakra-ui/react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoClose } from "react-icons/io5";
 import { useColorMode } from "./ui/color-mode";
-import { NavLinks } from "../data";
+import { userNavLinks } from "../data";
 import NavItem from "./NavItem";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -78,12 +78,12 @@ const NavMenu = ({ open, onClose, onOpen }: IProps) => {
         <Stack as={"nav"}>
           {!isLoggedIn && (
             <>
-              <NavItem to={"/signIn"} name={"Sign In"} />
-              <NavItem to={"/signUp"} name={"Sign Up"} />
+              <NavItem to={"/signIn"} name={"Sign In"} style={{ p: 4 }} />
+              <NavItem to={"/signUp"} name={"Sign Up"} style={{ p: 4 }} />
             </>
           )}
-          {NavLinks.map(({ name, to }) => (
-            <NavItem key={name} to={to} name={name} />
+          {userNavLinks.map(({ name, to }) => (
+            <NavItem key={name} to={to} name={name} style={{ p: 4 }} />
           ))}
         </Stack>
       </Box>
