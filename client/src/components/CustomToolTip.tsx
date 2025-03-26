@@ -7,7 +7,7 @@ interface IProps {
   content: string;
 }
 
-const ToolTipDetails = ({ children, content }: IProps) => {
+const CustomToolTip = ({ children, content }: IProps) => {
   const { colorMode } = useColorMode();
   return (
     <Tooltip
@@ -31,4 +31,4 @@ const ToolTipDetails = ({ children, content }: IProps) => {
   );
 };
 
-export default ToolTipDetails;
+export default CustomToolTip;

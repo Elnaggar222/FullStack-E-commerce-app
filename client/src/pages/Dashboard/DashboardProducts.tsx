@@ -2,7 +2,7 @@ import { HStack, Image, Table } from "@chakra-ui/react";
 import { IconButton } from "@chakra-ui/react";
 import { MdEdit, MdVisibility } from "react-icons/md";
 import { FaTrashAlt } from "react-icons/fa";
-import ToolTipDetails from "../../components/ToolTipDetails";
+import CustomToolTip from "../../components/CustomToolTip";
 import DashboardProductsSkeleton from "../../components/Dashboard/DashboardProductsSkeleton";
 
 const items = [
@@ -317,10 +317,7 @@ const DashboardProductsPage = () => {
   return (
     <Table.Root size="sm" interactive showColumnBorder>
       <Table.Header>
-        <Table.Row
-          bg={"gray.200"}
-          _dark={{ bg: "#0e2323" }}
-        >
+        <Table.Row bg={"gray.200"} _dark={{ bg: "#0e2323" }}>
           <Table.ColumnHeader fontWeight={"bold"}>Title</Table.ColumnHeader>
           <Table.ColumnHeader fontWeight={"bold"}>
             Description
@@ -353,7 +350,7 @@ const DashboardProductsPage = () => {
               key={documentId}
               _dark={{ bg: "#0a1a1b", _hover: { bg: "#0e1e1e" } }}
             >
-              <ToolTipDetails content={title}>
+              <CustomToolTip content={title}>
                 <Table.Cell
                   maxW={"150px"}
                   whiteSpace={"nowrap"}
@@ -362,9 +359,9 @@ const DashboardProductsPage = () => {
                 >
                   {title}
                 </Table.Cell>
-              </ToolTipDetails>
+              </CustomToolTip>
 
-              <ToolTipDetails content={description}>
+              <CustomToolTip content={description}>
                 <Table.Cell
                   maxW={"200px"}
                   whiteSpace={"nowrap"}
@@ -373,7 +370,7 @@ const DashboardProductsPage = () => {
                 >
                   {description}
                 </Table.Cell>
-              </ToolTipDetails>
+              </CustomToolTip>
 
               <Table.Cell>{price}</Table.Cell>
               <Table.Cell>{discountPercentage}</Table.Cell>
